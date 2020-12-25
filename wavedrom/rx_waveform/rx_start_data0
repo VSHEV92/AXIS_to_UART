@@ -1,0 +1,25 @@
+{
+  
+signal: [
+  {name: 'CLK',            wave: 'p.....|....|..|...'},
+  {name: 'RX',             wave: '10....|....|.=|...', data: ['DATA0'], node:'.1'} ,
+  {name: 'RX_FALLING',     wave: '0.10..|....|..|...', node:'..2'},
+  {name: 'CLK_COUNT_MAX',  wave: 'x.x=..|.=..|..|...', data: ['CPP/2', 'CPP']},
+  {name: 'CLK_COUNT',      wave: 'x..===|====|==|===', data: ['0', '1', '', 'CPP/2', '0', '1', '', 'CPP/2', '', 'CPP', '0', '1']},
+  {name: 'CLK_COUNT_EN',   wave: '0..1..|....|..|...'},
+  {name: 'CLK_COUNT_DONE', wave: '0.....|10..|..|10.', data: ['0', 'DATA1', 'DATAN'], node:'.......3.......5'},
+  {name: 'BIT_COUNT',      wave: 'x..=..|....|..|.=.', data: ['0', '1'], node:'................6'},
+  {name: 'BIT_COUNT_DONE', wave: '0.....|....|..|...', data: ['0', 'DATA1', 'DATAN']},
+  {name: 'FSM_STATE',      wave: '=..=..|.=..|..|...', data: ['IDLE', 'START', 'DATA'], node:'........4' }
+  
+],
+  
+edge: ['1~>2', '3~>4', '5~>6'],
+  
+head:{
+   text:'Прием старт-бита и первого бита'
+ },
+  
+config: { hscale: 2 }  
+
+}

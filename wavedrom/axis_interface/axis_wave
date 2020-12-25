@@ -1,0 +1,18 @@
+{
+  
+signal: [
+  {name: 'ACLK',    wave: 'p.|............' },
+  {name: 'ARESETN', wave: '01|............' },
+  {name: 'TREADY',  wave: 'x0|...1..01....' },
+  {name: 'TVALID',  wave: 'x0|1.......010.' },
+  {name: 'TDATA',   wave: 'xx|=...===.x=x.', data: ['TDATA1', 'TDATA2', 'TDATA3', 'TDATA4', 'TDATA5']},
+  {name: 'TUSER',   wave: 'xx|=...===.x=x.' , data: ['TUSER1', 'TUSER2', 'TUSER3', 'TUSER4', 'TUSER5']}
+],
+  
+head:{
+   text:'Временнные диаграммы AXI-Stream'
+ },
+  
+config: { hscale: 2 }  
+
+}

@@ -1,0 +1,25 @@
+{
+  
+signal: [
+  {name: 'CLK',            wave: 'p|...|...|..|...'},
+  {name: 'RX',             wave: '=|..=|...|.=|...', data: ['DATA0', 'DATA1','DATA2',]} ,
+  {name: 'RX_FALLING',     wave: '0|...|...|..|...'},
+  {name: 'CLK_COUNT_MAX',  wave: '=|...|...|..|...', data: ['CPP']},
+  {name: 'CLK_COUNT',      wave: '=|.==|===|==|===', data: ['', 'CPP/2', '', 'CPP', '0', '','CPP/2', '', 'CPP','0']},
+  {name: 'CLK_COUNT_EN',   wave: '1|...|...|..|...'},
+  {name: 'CLK_COUNT_DONE', wave: '0|...|10.|..|10.', data: ['0', 'DATA1', 'DATAN'], node:'......1......3'},
+  {name: 'BIT_COUNT',      wave: '=|...|.=.|..|.=.', data: ['1', '2', '3'], node:'.......2......4'},
+  {name: 'BIT_COUNT_DONE', wave: '0|...|...|..|...'},
+  {name: 'FSM_STATE',      wave: '=|...|...|..|...', data: ['DATA']}
+  
+],
+  
+edge: ['1~>2', '3~>4'],
+  
+head:{
+   text:'Прием первых бит данных'
+ },
+  
+config: { hscale: 2 }  
+
+}

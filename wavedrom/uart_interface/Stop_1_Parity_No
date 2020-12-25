@@ -1,0 +1,11 @@
+{
+  
+signal: [
+  {name: 'UART', wave: '=.|=.=.=.=.=|=.=.=|..', data: ['IDLE', 'START', 'DATA0', 'DATA1', 'DATA1','' , 'DATAN', 'STOP', 'IDLE']}
+],
+  
+head:{
+   text:'Один стоп-бит, без бита четности'
+ },
+  
+}
