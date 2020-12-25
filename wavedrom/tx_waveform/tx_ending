@@ -1,0 +1,17 @@
+{signal: [
+  {name: 'CLK',            wave: 'p.|....|...'},
+  {name: 'TX',             wave: '=.|....|.1.', data: ['STOP']},
+  {name: 'TDATA',          wave: 'x.|....|...', data: ['DATA']},
+  {name: 'TVALID',         wave: 'x.|....|...'},
+  {name: 'TREADY',         wave: '0.|....|.1.', node: '.........5'},
+  {name: 'CLK_COUNT',      wave: '=.|====|=x.', data: ['','CPP','0','1','','CPP','0','1','','CPP','0','1']},
+  {name: 'CLK_COUNT_EN',   wave: '1.|....|.0.', node: '.........6'},
+  {name: 'CLK_COUNT_DONE', wave: '0.|10..|10.', node: '...1....3.'},
+  {name: 'BIT_COUNT',      wave: 'x.|....|...'},
+  {name: 'BIT_COUNT_DONE', wave: '0.|....|...'},
+  {name: 'FSM_STATE',      wave: '=.|.=..|.=.', data: ['STOP1', 'STOP2', 'IDLE'], node: '....2....4'}
+],
+edge: ['1~>2','3~>4', '3~>5', '3~>6'],
+config: { hscale: 2 },
+head:{text: 'Звершение передачи данных'},
+}

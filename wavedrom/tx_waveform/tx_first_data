@@ -1,0 +1,17 @@
+{signal: [
+  {name: 'CLK',            wave: 'p.|....|....|...'},
+  {name: 'TX',             wave: '=.|.=..|.=..|.=.', data: ['DATA0', 'DATA1', 'DATA2', 'DATA3']},
+  {name: 'TDATA',          wave: 'x.|....|....|...', data: ['DATA']},
+  {name: 'TVALID',         wave: 'x.|....|....|...'},
+  {name: 'TREADY',         wave: '0.|....|....|...'},
+  {name: 'CLK_COUNT',      wave: '=.|====|====|===', data: ['','CPP','0','1','','CPP','0','1','','CPP','0','1']},
+  {name: 'CLK_COUNT_EN',   wave: '1.|....|....|...'},
+  {name: 'CLK_COUNT_DONE', wave: '0.|10..|10..|10.', node: '...1....3....5'},
+  {name: 'BIT_COUNT',      wave: '=.|.=..|.=..|.=.', data: ['0','1','2','3'], node: '....2....4....6'},
+  {name: 'BIT_COUNT_DONE', wave: '0.|....|....|...'},
+  {name: 'FSM_STATE',      wave: '=.|....|....|...', data: ['DATA']}
+],
+edge: ['1~>2','3~>4','5~>6'],
+config: { hscale: 2 },
+head:{text: 'Выдача первых бит данных'},
+}
