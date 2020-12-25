@@ -4,7 +4,7 @@
 parameter int CLK_FREQ = 100;              // тактовая частота в MHz  
 parameter int RESET_DEASSERT_DELAY = 100;  // время снятия сигнала сброса ns
 parameter int DATA_WORDS_NUMB = 100;      // число передаваемых слов
-parameter int PARITY_ERR_PROB = 1;         // ошибки в передаваемом слове в процентах
+parameter int PARITY_ERR_PROB = 7;         // ошибки в передаваемом слове в процентах
 
 parameter int DATA_MIN_DELAY = 5*10e4;      // миниммальная задержка между передачей данных
 parameter int DATA_MAX_DELAY = 10e5;      // максимальная задержка между передачей данных

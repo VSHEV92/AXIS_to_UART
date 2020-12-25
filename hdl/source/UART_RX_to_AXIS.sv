@@ -90,7 +90,7 @@ assign axis_port.tvalid = (State == OUT_RDY) ? 1'b1 : 1'b0;
 always_ff @(posedge axis_port.aclk) begin
     if(!axis_port.aresetn)
         Parity_Err <= 'b0;
-    else if(State == OUT_RDY)
+    else if(Clk_Count_Done && State == PARITY)
         unique case(PARITY_BIT) 
             0: Parity_Err <= 'b0;
             1: Parity_Err <= ~(^{Data_Shift_Reg[BIT_PER_WORD-1:0], uart_port.RX});  // xor бит данных и бита четности  

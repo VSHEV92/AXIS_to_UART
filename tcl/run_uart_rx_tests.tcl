@@ -2,8 +2,32 @@
 # ----- Cкрипт для автоматического запуска тестов Uart RX ------
 # --------------------------------------------------------------
 
+# -----------------------------------------------------------
+proc launch_test_set {Test_Number Log_Dir_Name} {
+	# выбераем первый тестовый набор в качествре начального   
+	set Test_Set_Name ./hdl/header/test_sets/test_set
+	append Test_Set_Name _$Test_Number
+	append Test_Set_Name .vh
+	file copy -force $Test_Set_Name ./hdl/header/test_set.vh
+
+	# пишим номер теста в log файлы
+	set fileID [open $Log_Dir_Name/Test_Results.txt a]
+	puts -nonewline $fileID "TEST SET $Test_Number: "
+	close $fileID
+   
+	set fileID [open $Log_Dir_Name/Test_Logs.txt a]
+	puts $fileID ""
+	puts $fileID "TEST SET $Test_Number: "
+	close $fileID
+	
+	# запускаем моделирование
+	launch_simulation
+	close_sim -quiet 
+}
+# -----------------------------------------------------------
+
 set Project_Name uart_rx_test
-set Test_Number 1
+set Number_of_Test_Sets 6
 
 # если проект с таким именем существует удаляем его
 close_sim -quiet 
@@ -17,9 +41,7 @@ if { [file exists $Project_Name] != 0 } {
 create_project $Project_Name ./$Project_Name -part xc7vx485tffg1157-1
 
 # выбераем первый тестовый набор в качествре начального   
-set Test_Set_Name ./hdl/header/test_sets/test_set
-append Test_Set_Name _$Test_Number
-append Test_Set_Name .vh
+set Test_Set_Name ./hdl/header/test_sets/test_set_1.vh
 file copy -force $Test_Set_Name ./hdl/header/test_set.vh
 
 # добавляем заголовочные файлы к проекту
@@ -45,14 +67,15 @@ set_property -name {xsim.simulate.runtime} -value {100s} -objects [get_filesets 
 set Log_Dir_Name log_$Project_Name
 file mkdir $Log_Dir_Name
 set fileID [open $Log_Dir_Name/Test_Results.txt w]
-puts -nonewline $fileID "TEST SET $Test_Number: "
 close $fileID
-
 set fileID [open $Log_Dir_Name/Test_Logs.txt w]
-puts $fileID ""
-puts $fileID "TEST SET $Test_Number: "
 close $fileID
 
+# запускаем тестовые наборы
+for {set i 1} {$i <= $Number_of_Test_Sets} {incr i} {
+    launch_test_set $i $Log_Dir_Name
+}
 
-launch_simulation
-close_sim -quiet 
+# закрываем проект после завершения
+close_project -quiet
+

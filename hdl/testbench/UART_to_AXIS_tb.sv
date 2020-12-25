@@ -115,18 +115,18 @@ module UART_to_AXIS_tb();
         for (int i = 0; i < DATA_WORDS_NUMB; i++) begin 
             // сравнение полученных данных
             if (result_data_array[i] != data_array[i]) begin
-                $display("Data words number %d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
-                $fdisplay(f_log, "Data words number %d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
+                $display("Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
+                $fdisplay(f_log, "Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
                 test_result = 0;
             end
             
             // сравнение бит четности
-            if (PARITY_BIT != 0) begin
-                if(parity_err_array[i] != result_parity_err_array[i])
-                    $display("Parite error bits in word number %d not match! Gold value: %h. Result value: %h.", i, parity_err_array[i], result_parity_err_array[i]);
-                    $fdisplay(f_log, "Parite error bits in word number %d not match! Gold value: %h. Result value: %h.", i, parity_err_array[i], result_parity_err_array[i]);
+            if (PARITY_BIT != 0)
+                if(parity_err_array[i] != result_parity_err_array[i]) begin
+                    $display("Parite error bits in word number %3d not match! Gold value: %h. Result value: %h.", i, parity_err_array[i], result_parity_err_array[i]);
+                    $fdisplay(f_log, "Parite error bits in word number %3d not match! Gold value: %h. Result value: %h.", i, parity_err_array[i], result_parity_err_array[i]);
                     test_result = 0;  
-            end
+                end
         end
         // вывод результатов тестирования
         $display("-------------------------------------");

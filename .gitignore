@@ -20,8 +20,8 @@
 !hdl
 !hdl/header
 !hdl/header/*
-!hdl/header/testsets
-!hdl/header/testsets/*
+!hdl/header/test_sets
+!hdl/header/test_sets/*
 !hdl/source
 !hdl/source/*
 !hdl/testbench

@@ -658,14 +658,14 @@
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="262.67521289062483" width="435.96628173828185" x="326.9330468749997" y="752.3583630371095"/>
+              <y:Geometry height="276.25138476562483" width="435.96628173828185" x="326.9330468749997" y="738.7821911621095"/>
               <y:Fill color="#FFFFFF" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
               <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="435.96628173828185" x="0.0" xml:space="preserve" y="0.0">PARITY COUNTER</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-              <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
+              <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="3" topF="3.048828125"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="50.0" x="0.0" y="60.0"/>
@@ -741,7 +741,8 @@
               <y:Geometry height="23.75" width="22.5" x="612.625" y="792.8598278808595"/>
               <y:Fill hasColor="false" transparent="false"/>
               <y:BorderStyle hasColor="false" raised="false" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="120.6953125" x="-37.84765625" xml:space="preserve" y="2.5244140625">STATE == OUT_RDY<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.5" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#FFFFFF" fontFamily="Dialog" fontSize="12" fontStyle="plain" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" lineColor="#FFFFFF" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="118.03515625" x="-47.767578125" xml:space="preserve" y="-13.65234375">STATE == PARITY &amp;
+COUNT_DONE<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="-0.09127587416676414" nodeRatioX="0.0" nodeRatioY="-0.5" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
               <y:Shape type="rectangle"/>
             </y:ShapeNode>
           </data>
@@ -1101,7 +1102,6 @@
       </data>
     </edge>
     <edge id="n3::e1" source="n3::n0" target="n3::n5">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -1114,7 +1114,6 @@
       </data>
     </edge>
     <edge id="n3::e2" source="n3::n1" target="n3::n3">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1145,7 +1144,6 @@
       </data>
     </edge>
     <edge id="n3::e5" source="n3::n5" target="n3::n3">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
