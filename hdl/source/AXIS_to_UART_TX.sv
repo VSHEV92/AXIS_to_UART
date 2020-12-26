@@ -1,10 +1,10 @@
 `timescale 1ns / 1ps
 `include "../header/Interfaces.vh"
 
-// модуль реализует прием uart сигнала и выдачу полученных данных по
-// axi-stream интерфейсу 
+// модуль реализует прием axi-stream сигнала и выдачу полученных данных по
+// uart интерфейсу 
 
-module UART_RX_to_AXIS
+module AXIS_to_UART_TX
 #(
     parameter int CLK_FREQ = 100,       // тактовая частота в MHz
     parameter int BIT_RATE = 115200,    // скорость данных в бит/с
@@ -13,39 +13,42 @@ module UART_RX_to_AXIS
     parameter int STOP_BITS_NUM = 1     // число стоп-бит: 1 или 2
 )
 (
-    AXIS_intf.Master axis_port,    //  axi-stream интерфейс
-    UART_intf.RX_Mod uart_port     //  uart интерфейс
+    AXIS_intf.Slave axis_port,     //  axi-stream интерфейс
+    UART_intf.TX_Mod uart_port     //  uart интерфейс
 );
 
 // -----------------------------------------------------------------------------    
-enum logic[2:0] {IDLE, START, DATA, PARITY, STOP1, STOP2, OUT_RDY} State, Next_State;
+enum logic[2:0] {IDLE, START, DATA, PARITY, STOP1, STOP2} State, Next_State;
 
 localparam int Cycle_per_Period = CLK_FREQ * 10e6 / BIT_RATE;
-localparam int Cycle_per_Period_Half = Cycle_per_Period/2;
 
-logic RX_Falling;
-logic [1:0] RX_Falling_Reg;
-
-logic [17:0] Clk_Count, Clk_Count_Max;
+logic [17:0] Clk_Count;
 logic Clk_Count_En, Clk_Count_Done;
 
 logic [3:0] Bit_Count;
 logic Bit_Count_Done;
 
-logic [BIT_PER_WORD-1:0] Data_Shift_Reg;
+logic [BIT_PER_WORD-1:0] Data;
 
-logic Parity_Err;
+logic Parity_Value, Uart_Out;
 
 // -----------------------------------------------------------------------------    
-// обнаружения спада сигнала RX
-always_ff @(posedge axis_port.aclk) begin
+// входной регистр
+always_ff @(posedge axis_port.aclk)
     if(!axis_port.aresetn)
-        RX_Falling_Reg <= 'b1;
-    else
-        RX_Falling_Reg <= {RX_Falling_Reg[0], uart_port.RX};  
-end        
-assign RX_Falling = RX_Falling_Reg[1] & ~RX_Falling_Reg[0];      
+        Data <= 'b0;
+    else if (axis_port.tvalid && axis_port.tready)
+        Data <= axis_port.tdata;
 
+// -----------------------------------------------------------------------------    
+// вычисление бита четности
+always_comb 
+    unique case(PARITY_BIT) 
+        0: Parity_Value = 'b0;
+        1: Parity_Value = ~(^Data[BIT_PER_WORD-1:0]);  // xor бит данных 
+        2: Parity_Value = ^Data[BIT_PER_WORD-1:0]; 
+    endcase       
+       
 // -----------------------------------------------------------------------------    
 // счетчик числа циклов
 always_ff @(posedge axis_port.aclk) begin
@@ -53,11 +56,11 @@ always_ff @(posedge axis_port.aclk) begin
         Clk_Count <= 'b0;
     else if(Clk_Count_En) begin
         Clk_Count <= Clk_Count + 1;
-        if (Clk_Count == Clk_Count_Max)
+        if (Clk_Count == Cycle_per_Period)
             Clk_Count <= 'b0;
     end    
 end        
-assign Clk_Count_Done = (Clk_Count == Clk_Count_Max) ? 1'b1 : 1'b0; 
+assign Clk_Count_Done = (Clk_Count == Cycle_per_Period) ? 1'b1 : 1'b0; 
 
 // -----------------------------------------------------------------------------    
 // счетчик числа принятых бит
@@ -76,27 +79,11 @@ assign Bit_Count_Done = (Bit_Count == BIT_PER_WORD-1 && Clk_Count_Done) ? 1'b1 :
 // блок выдачи данных
 always_ff @(posedge axis_port.aclk) begin
     if(!axis_port.aresetn)
-        Data_Shift_Reg <= 'b0;
-    else if(Clk_Count_Done && State == DATA) 
-        Data_Shift_Reg <= {uart_port.RX, Data_Shift_Reg[BIT_PER_WORD-1:1]};        
+        uart_port.TX <= 'b1;
+    else 
+        uart_port.TX <= Uart_Out;        
 end        
-
-assign axis_port.tdata = Data_Shift_Reg;
-assign axis_port.tuser = Parity_Err;
-assign axis_port.tvalid = (State == OUT_RDY) ? 1'b1 : 1'b0;
-
-// -----------------------------------------------------------------------------    
-// вычисление бита четности
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
-        Parity_Err <= 'b0;
-    else if(Clk_Count_Done && State == PARITY)
-        unique case(PARITY_BIT) 
-            0: Parity_Err <= 'b0;
-            1: Parity_Err <= ~(^{Data_Shift_Reg[BIT_PER_WORD-1:0], uart_port.RX});  // xor бит данных и бита четности  
-            2: Parity_Err <= ^{Data_Shift_Reg[BIT_PER_WORD-1:0], uart_port.RX}; 
-        endcase       
-end        
+assign axis_port.tready = (State == IDLE) ? 1'b1 : 1'b0;
 
 // -----------------------------------------------------------------------------    
 // автомат уравления
@@ -111,19 +98,29 @@ always_ff @(posedge axis_port.aclk)
 // вычисление выходных сигналов
 always_comb
     unique case(State)
-        IDLE, OUT_RDY: begin
+        IDLE: begin
             Clk_Count_En = 1'b0;
-            Clk_Count_Max = Cycle_per_Period;
+            Uart_Out = 1'b1;
         end
     
         START: begin
             Clk_Count_En = 1'b1;
-            Clk_Count_Max = Cycle_per_Period_Half;
+            Uart_Out = 1'b0;
         end
     
-        DATA, PARITY, STOP1, STOP2: begin
+        DATA: begin
             Clk_Count_En = 1'b1;
-            Clk_Count_Max = Cycle_per_Period;
+            Uart_Out = Data[Bit_Count];
+        end
+        
+        PARITY: begin
+            Clk_Count_En = 1'b1;
+            Uart_Out = Parity_Value;
+        end
+        
+        STOP1, STOP2: begin
+            Clk_Count_En = 1'b1;
+            Uart_Out = 1'b1;
         end
     endcase
 
@@ -131,12 +128,12 @@ always_comb
 always_comb
     unique case(State)
         IDLE: // ожидание начала передачи
-            Next_State = (RX_Falling) ? START : IDLE;
+            Next_State = (axis_port.tvalid) ? START : IDLE;
             
-        START: // прием старт-бита
+        START: // выдача старт-бита
             Next_State = (Clk_Count_Done) ? DATA : START; 
              
-        DATA: // прием бит данных 
+        DATA: // выдача бит данных 
             if (Bit_Count_Done)
                 if (PARITY_BIT)
                     Next_State = PARITY;
@@ -145,23 +142,20 @@ always_comb
             else
                 Next_State = DATA; 
                              
-        PARITY: // прием бита четности
+        PARITY: // выдача бита четности
             Next_State = (Clk_Count_Done) ? STOP1 : PARITY; 
             
-        STOP1: // прием первого стоп-бита
+        STOP1: // выдача первого стоп-бита
             if (Clk_Count_Done)
                 if (PARITY_BIT == 1)
-                    Next_State = OUT_RDY;
+                    Next_State = IDLE;
                 else
                     Next_State = STOP2;  
             else
                 Next_State = STOP1; 
             
-        STOP2: // прием второго стоп-бита
-            Next_State = (Clk_Count_Done) ? OUT_RDY : STOP2;
-            
-        OUT_RDY: // выдача данных на выход
-            Next_State = IDLE;
+        STOP2: // выдача второго стоп-бита
+            Next_State = (Clk_Count_Done) ? IDLE : STOP2;        
     endcase
-
+    
 endmodule

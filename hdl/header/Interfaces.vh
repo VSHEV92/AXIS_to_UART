@@ -18,20 +18,47 @@ interface AXIS_intf (
 
     modport Slave (
         input  aclk, aresetn,
-        input  tdata, tuser, tvalid,
+        input  tdata, tvalid,
         output tready
     );
 
+    //-------------------------------------------------------------------------------------
     // постоянно принимает данные по axis и передает их mailbox
     task automatic put_forever_to_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
         forever begin
             wait (aresetn);
             @(posedge aclk)
-            // если данные валидны, скадем их d mailbox
+            // если данные валидны, скадем их в mailbox
             if(tvalid) begin
                 data_mb.put(tdata);
                 parity_err_mb.put(tuser);
             end             
+        end        
+    endtask
+    
+    //-------------------------------------------------------------------------------------
+    // постоянно принимает данные из mailbox и передает их по axis  
+    task automatic get_forever_from_mailbox(ref mailbox data_mb);
+        logic [7:0] data = 'b0;
+        bit new_data = 1'b0; // флаг новых данных на линии
+        tvalid = 1'b0;
+        forever begin
+            wait (aresetn);
+            @(posedge aclk)        
+            if (!new_data) // получаем новые данные и выставляем из на линию
+                if(data_mb.try_get(data)) begin
+                    new_data = 1'b1;
+                    tvalid <= 1'b1;
+                    tdata <= data;
+                end else
+                    tvalid <= 1'b0;
+            else // иначе, если tready равен единице, говорим, что данные получены
+                if(tready) begin 
+                    new_data = 1'b0;     
+                end
+                  
+            
+                        
         end        
     endtask
 
@@ -52,7 +79,7 @@ interface UART_intf
         input logic aresetn 
     );
 
-    logic RX = 1;
+    logic RX;
     logic TX;
     
     modport RX_Mod (
@@ -62,13 +89,15 @@ interface UART_intf
     modport TX_Mod (
         input  TX 
     );
-
+    
+    //-------------------------------------------------------------------------------------
     // постоянно принимать данные их mailbox и отдавать в uart rx
     task automatic get_forever_from_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
         parameter bit_len_in_ns = 10e9/BIT_RATE;
         logic [BIT_PER_WORD-1:0] data;
         logic parity_err, parity_bit;
-         
+        
+        RX = 1; 
         forever begin
             wait (aresetn);     
             // получение данных и формирование бита четности
@@ -100,6 +129,44 @@ interface UART_intf
             #bit_len_in_ns;                
         end        
     endtask
+    
+    //-------------------------------------------------------------------------------------
+    // постоянно принимать данные из uart и выдавать их в mailbox
+    task automatic put_forever_to_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
+        parameter bit_len_in_ns = 10e9/BIT_RATE;
+        logic [BIT_PER_WORD-1:0] data;
+        logic parity_err;
+        
+        forever begin
+            wait (aresetn);
+            @(negedge TX); // ожидаем спада TX
+            
+            // ждем пол периода, чтобы попасть на середину старт-бита 
+            #(bit_len_in_ns/2);
+            
+            // принимаем биты данных
+            for (int i = 0; i<BIT_PER_WORD; i++) // данные
+                #bit_len_in_ns data[i] = TX;
+            
+            // если есть бит четности принимаем его
+            if (PARITY_BIT != 0) begin
+                #bit_len_in_ns;
+                if (PARITY_BIT == 1)
+                    parity_err = ~(^{data, TX});
+                else
+                    parity_err = ^{data, TX};
+            end else
+                parity_err = 1'b0;
+            
+            // дожидаемся середины стоп-бита
+            #bit_len_in_ns; 
+                
+            // запись данных и ошибки четности
+            data_mb.put(data);
+            parity_err_mb.put(parity_err);
+                       
+        end        
+    endtask  
     
 endinterface    
     

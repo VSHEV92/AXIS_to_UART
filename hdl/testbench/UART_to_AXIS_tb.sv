@@ -3,16 +3,6 @@
 `include "../header/testbench_settings.vh"
 `include "../header/test_set.vh"
 
-// функция для поиска пути расположения тестового файла
-function automatic string find_file_path(input string file_full_name);
-    int str_len = file_full_name.len();
-    str_len--;
-    while (file_full_name.getc(str_len) != "/") begin
-        str_len--;
-    end
-    return file_full_name.substr(0, str_len); 
-endfunction
-
 // ---------------------------------------------------------------
 //---------- тестового окружения для приемника UART --------------
 // ---------------------------------------------------------------
