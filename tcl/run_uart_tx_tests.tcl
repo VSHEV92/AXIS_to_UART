@@ -7,8 +7,8 @@ proc launch_test_set {Test_Number Log_Dir_Name} {
 	# выбераем первый тестовый набор в качествре начального   
 	set Test_Set_Name ./hdl/header/test_sets/test_set
 	append Test_Set_Name _$Test_Number
-	append Test_Set_Name .vh
-	file copy -force $Test_Set_Name ./hdl/header/test_set.vh
+	append Test_Set_Name .svh
+	file copy -force $Test_Set_Name ./hdl/header/test_set.svh
 
 	# пишим номер теста в log файлы
 	set fileID [open $Log_Dir_Name/Test_Results.txt a]
@@ -41,13 +41,13 @@ if { [file exists $Project_Name] != 0 } {
 create_project $Project_Name ./$Project_Name -part xc7vx485tffg1157-1
 
 # выбераем первый тестовый набор в качествре начального   
-set Test_Set_Name ./hdl/header/test_sets/test_set_1.vh
-file copy -force $Test_Set_Name ./hdl/header/test_set.vh
+set Test_Set_Name ./hdl/header/test_sets/test_set_1.svh
+file copy -force $Test_Set_Name ./hdl/header/test_set.svh
 
 # добавляем заголовочные файлы к проекту
-add_files ./hdl/header/Interfaces.vh
-add_files ./hdl/header/testbench_settings.vh
-add_files ./hdl/header/test_set.vh
+add_files ./hdl/header/Interfaces.svh
+add_files ./hdl/header/testbench_settings.svh
+add_files ./hdl/header/test_set.svh
 
 # добавляем исходники к проекту
 add_files ./hdl/source/AXIS_to_UART_TX.sv

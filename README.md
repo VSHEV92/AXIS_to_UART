@@ -31,5 +31,11 @@ IP-ядро, преобразующее AXI-Stream в UART и обратно
   vivado -mode batch –source tcl/run_uart_rx_tests.tcl
   ```
 
-  
+- Тесты для проверки UART TX: 
 
+  ```
+  vivado -mode batch –source tcl/run_uart_tx_tests.tcl
+  ```
+
+
+Результаты тестов, появятся в папках log_uart_*_.  Test_Results - краткий отчет. Test_Logs - подробный список ошибок.

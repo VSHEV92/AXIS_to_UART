@@ -55,10 +55,7 @@ interface AXIS_intf (
             else // иначе, если tready равен единице, говорим, что данные получены
                 if(tready) begin 
                     new_data = 1'b0;     
-                end
-                  
-            
-                        
+                end               
         end        
     endtask
 

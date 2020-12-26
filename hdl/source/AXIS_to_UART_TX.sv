@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "../header/Interfaces.vh"
+`include "../header/Interfaces.svh"
 
 // модуль реализует прием axi-stream сигнала и выдачу полученных данных по
 // uart интерфейсу 

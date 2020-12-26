@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
-`include "../header/Interfaces.vh"
-`include "../header/testbench_settings.vh"
-`include "../header/test_set.vh"
+`include "../header/Interfaces.svh"
+`include "../header/testbench_settings.svh"
+`include "../header/test_set.svh"
 
 // ---------------------------------------------------------------
 //---------- тестового окружения для приемника UART --------------
