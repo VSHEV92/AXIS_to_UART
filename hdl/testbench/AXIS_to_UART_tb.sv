@@ -91,41 +91,41 @@ module AXIS_to_UART_tb();
 
 // ---------------------------------------------------------------------------------        
 // обработка результатов моделирования
-//     final begin
-//        automatic bit test_result = 1;
-//        automatic string file_path = find_file_path(`__FILE__);
-//        f_result = $fopen({file_path, "../../log_uart_rx_test/Test_Results.txt"}, "a");
-//        f_log = $fopen({file_path, "../../log_uart_rx_test/Test_Logs.txt"}, "a");
+     final begin
+        automatic bit test_result = 1;
+        automatic string file_path = find_file_path(`__FILE__);
+        f_result = $fopen({file_path, "../../log_uart_tx_test/Test_Results.txt"}, "a");
+        f_log = $fopen({file_path, "../../log_uart_tx_test/Test_Logs.txt"}, "a");
         
-//        for (int i = 0; i < DATA_WORDS_NUMB; i++) begin 
-//            // сравнение полученных данных
-//            if (result_data_array[i] != data_array[i]) begin
-//                $display("Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
-//                $fdisplay(f_log, "Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
-//                test_result = 0;
-//            end
+        for (int i = 0; i < DATA_WORDS_NUMB; i++) begin 
+            // сравнение полученных данных
+            if (result_data_array[i] != data_array[i]) begin
+                $display("Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
+                $fdisplay(f_log, "Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
+                test_result = 0;
+            end
             
-//            // сравнение бит четности
-//            if (PARITY_BIT != 0)
-//                if(parity_err_array[i]) begin
-//                    $display("Parite error in word number %3d!", i);
-//                    $fdisplay(f_log, "Parite error in word number %3d!", i);
-//                    test_result = 0;  
-//                end
-//        end
-//        // вывод результатов тестирования
-//        $display("-------------------------------------");
-//        if (test_result) begin
-//            $display("------------- TEST PASS -------------");
-//            $fdisplay(f_result, "TEST PASS");
-//        end else begin
-//            $display("------------- TEST FAIL -------------");
-//            $fdisplay(f_result, "TEST FAIL");
-//        end
-//        $display("-------------------------------------");
+            // сравнение бит четности
+            if (PARITY_BIT != 0)
+                if(parity_err_array[i]) begin
+                    $display("Parite error in word number %3d!", i);
+                    $fdisplay(f_log, "Parite error in word number %3d!", i);
+                    test_result = 0;  
+                end
+        end
+        // вывод результатов тестирования
+        $display("-------------------------------------");
+        if (test_result) begin
+            $display("------------- TEST PASS -------------");
+            $fdisplay(f_result, "TEST PASS");
+        end else begin
+            $display("------------- TEST FAIL -------------");
+            $fdisplay(f_result, "TEST FAIL");
+        end
+        $display("-------------------------------------");
         
-//        $fclose(f_result);
-//        $fclose(f_log);    
-//     end
+        $fclose(f_result);
+        $fclose(f_log);    
+     end
     
 endmodule
