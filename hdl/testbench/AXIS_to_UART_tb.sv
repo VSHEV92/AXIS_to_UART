@@ -47,8 +47,14 @@ module AXIS_to_UART_tb();
     )
     DUT
     (
-        .axis_port(axis.Slave),
-        .uart_port(uart.TX_Mod)   
+        //  axi-stream интерфейс
+        .aclk(axis.Slave.aclk), 
+        .aresetn(axis.Slave.aresetn),
+        .tdata(axis.Slave.tdata), 
+        .tvalid(axis.Slave.tvalid),
+        .tready(axis.Slave.tready),
+        //  uart интерфейс    
+        .TX(uart.TX_Mod.TX)  
     );
 
 // ---------------------------------------------------------------------------------            

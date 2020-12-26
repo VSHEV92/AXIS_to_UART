@@ -1,6 +1,4 @@
 `timescale 1ns / 1ps
-`include "../header/Interfaces.svh"
-
 // модуль реализует прием uart сигнала и выдачу полученных данных по
 // axi-stream интерфейсу 
 
@@ -13,8 +11,12 @@ module UART_RX_to_AXIS
     parameter int STOP_BITS_NUM = 1     // число стоп-бит: 1 или 2
 )
 (
-    AXIS_intf.Master axis_port,    //  axi-stream интерфейс
-    UART_intf.RX_Mod uart_port     //  uart интерфейс
+    //  axi-stream интерфейс
+    input  logic aclk, aresetn,
+    output logic [7:0] tdata,
+	output logic tuser, tvalid,
+    //  uart интерфейс    
+    input logic RX    
 );
 
 // -----------------------------------------------------------------------------    
@@ -38,18 +40,18 @@ logic Parity_Err;
 
 // -----------------------------------------------------------------------------    
 // обнаружения спада сигнала RX
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) begin
+    if(!aresetn)
         RX_Falling_Reg <= 'b1;
     else
-        RX_Falling_Reg <= {RX_Falling_Reg[0], uart_port.RX};  
+        RX_Falling_Reg <= {RX_Falling_Reg[0], RX};  
 end        
 assign RX_Falling = RX_Falling_Reg[1] & ~RX_Falling_Reg[0];      
 
 // -----------------------------------------------------------------------------    
 // счетчик числа циклов
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) begin
+    if(!aresetn)
         Clk_Count <= 'b0;
     else if(Clk_Count_En) begin
         Clk_Count <= Clk_Count + 1;
@@ -61,8 +63,8 @@ assign Clk_Count_Done = (Clk_Count == Clk_Count_Max) ? 1'b1 : 1'b0;
 
 // -----------------------------------------------------------------------------    
 // счетчик числа принятых бит
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) begin
+    if(!aresetn)
         Bit_Count <= 'b0;
     else if(Clk_Count_Done && State == DATA) begin
         Bit_Count <= Bit_Count + 1;
@@ -74,27 +76,27 @@ assign Bit_Count_Done = (Bit_Count == BIT_PER_WORD-1 && Clk_Count_Done) ? 1'b1 :
 
 // -----------------------------------------------------------------------------    
 // блок выдачи данных
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) begin
+    if(!aresetn)
         Data_Shift_Reg <= 'b0;
     else if(Clk_Count_Done && State == DATA) 
-        Data_Shift_Reg <= {uart_port.RX, Data_Shift_Reg[BIT_PER_WORD-1:1]};        
+        Data_Shift_Reg <= {RX, Data_Shift_Reg[BIT_PER_WORD-1:1]};        
 end        
 
-assign axis_port.tdata = Data_Shift_Reg;
-assign axis_port.tuser = Parity_Err;
-assign axis_port.tvalid = (State == OUT_RDY) ? 1'b1 : 1'b0;
+assign tdata = Data_Shift_Reg;
+assign tuser = Parity_Err;
+assign tvalid = (State == OUT_RDY) ? 1'b1 : 1'b0;
 
 // -----------------------------------------------------------------------------    
 // вычисление бита четности
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) begin
+    if(!aresetn)
         Parity_Err <= 'b0;
     else if(Clk_Count_Done && State == PARITY)
         unique case(PARITY_BIT) 
             0: Parity_Err <= 'b0;
-            1: Parity_Err <= ~(^{Data_Shift_Reg[BIT_PER_WORD-1:0], uart_port.RX});  // xor бит данных и бита четности  
-            2: Parity_Err <= ^{Data_Shift_Reg[BIT_PER_WORD-1:0], uart_port.RX}; 
+            1: Parity_Err <= ~(^{Data_Shift_Reg[BIT_PER_WORD-1:0], RX});  // xor бит данных и бита четности  
+            2: Parity_Err <= ^{Data_Shift_Reg[BIT_PER_WORD-1:0], RX}; 
         endcase       
 end        
 
@@ -102,8 +104,8 @@ end
 // автомат уравления
 
 // смена состояния
-always_ff @(posedge axis_port.aclk) 
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) 
+    if(!aresetn)
         State <= IDLE;
     else
         State <= Next_State;

@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-`include "../header/Interfaces.svh"
 
 // модуль реализует прием axi-stream сигнала и выдачу полученных данных по
 // uart интерфейсу 
@@ -13,8 +12,13 @@ module AXIS_to_UART_TX
     parameter int STOP_BITS_NUM = 1     // число стоп-бит: 1 или 2
 )
 (
-    AXIS_intf.Slave axis_port,     //  axi-stream интерфейс
-    UART_intf.TX_Mod uart_port     //  uart интерфейс
+    //  axi-stream интерфейс
+    input  logic aclk, aresetn,
+    input  logic [7:0] tdata,
+    input  logic tvalid,
+    output logic tready,
+    //  uart интерфейс     
+    output logic TX     
 );
 
 // -----------------------------------------------------------------------------    
@@ -34,11 +38,11 @@ logic Parity_Value, Uart_Out;
 
 // -----------------------------------------------------------------------------    
 // входной регистр
-always_ff @(posedge axis_port.aclk)
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk)
+    if(!aresetn)
         Data <= 'b0;
-    else if (axis_port.tvalid && axis_port.tready)
-        Data <= axis_port.tdata;
+    else if (tvalid && tready)
+        Data <= tdata;
 
 // -----------------------------------------------------------------------------    
 // вычисление бита четности
@@ -51,8 +55,8 @@ always_comb
        
 // -----------------------------------------------------------------------------    
 // счетчик числа циклов
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) begin
+    if(!aresetn)
         Clk_Count <= 'b0;
     else if(Clk_Count_En) begin
         Clk_Count <= Clk_Count + 1;
@@ -64,8 +68,8 @@ assign Clk_Count_Done = (Clk_Count == Cycle_per_Period) ? 1'b1 : 1'b0;
 
 // -----------------------------------------------------------------------------    
 // счетчик числа принятых бит
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) begin
+    if(!aresetn)
         Bit_Count <= 'b0;
     else if(Clk_Count_Done && State == DATA) begin
         Bit_Count <= Bit_Count + 1;
@@ -77,20 +81,20 @@ assign Bit_Count_Done = (Bit_Count == BIT_PER_WORD-1 && Clk_Count_Done) ? 1'b1 :
 
 // -----------------------------------------------------------------------------    
 // блок выдачи данных
-always_ff @(posedge axis_port.aclk) begin
-    if(!axis_port.aresetn)
-        uart_port.TX <= 'b1;
+always_ff @(posedge aclk) begin
+    if(!aresetn)
+        TX <= 'b1;
     else 
-        uart_port.TX <= Uart_Out;        
+        TX <= Uart_Out;        
 end        
-assign axis_port.tready = (State == IDLE) ? 1'b1 : 1'b0;
+assign tready = (State == IDLE) ? 1'b1 : 1'b0;
 
 // -----------------------------------------------------------------------------    
 // автомат уравления
 
 // смена состояния
-always_ff @(posedge axis_port.aclk) 
-    if(!axis_port.aresetn)
+always_ff @(posedge aclk) 
+    if(!aresetn)
         State <= IDLE;
     else
         State <= Next_State;
@@ -128,7 +132,7 @@ always_comb
 always_comb
     unique case(State)
         IDLE: // ожидание начала передачи
-            Next_State = (axis_port.tvalid) ? START : IDLE;
+            Next_State = (tvalid) ? START : IDLE;
             
         START: // выдача старт-бита
             Next_State = (Clk_Count_Done) ? DATA : START; 
