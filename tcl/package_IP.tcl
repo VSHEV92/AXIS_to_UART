@@ -85,7 +85,7 @@ ipx::add_port_map TVALID [ipx::get_bus_interfaces axis_out -of_objects [ipx::cur
 set_property physical_name out_tvalid [ipx::get_port_maps TVALID -of_objects [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]]
 ipx::add_port_map TDATA [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]
 set_property physical_name out_tdata [ipx::get_port_maps TDATA -of_objects [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]]
-set_property enablement_dependency {$RX_TX != "RX"} [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]
+set_property enablement_dependency {$RX_TX != "TX"} [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]
 ipx::associate_bus_interfaces -busif axis_out -clock aclk [ipx::current_core]
 
 # входной axis
@@ -99,7 +99,7 @@ ipx::add_port_map TREADY [ipx::get_bus_interfaces axis_in -of_objects [ipx::curr
 set_property physical_name in_tready [ipx::get_port_maps TREADY -of_objects [ipx::get_bus_interfaces axis_in -of_objects [ipx::current_core]]]
 ipx::add_port_map TDATA [ipx::get_bus_interfaces axis_in -of_objects [ipx::current_core]]
 set_property physical_name in_tdata [ipx::get_port_maps TDATA -of_objects [ipx::get_bus_interfaces axis_in -of_objects [ipx::current_core]]]
-set_property enablement_dependency {$RX_TX != "TX"} [ipx::get_bus_interfaces axis_in -of_objects [ipx::current_core]]
+set_property enablement_dependency {$RX_TX != "RX"} [ipx::get_bus_interfaces axis_in -of_objects [ipx::current_core]]
 ipx::associate_bus_interfaces -busif axis_in -clock aclk [ipx::current_core]
 
 # uart

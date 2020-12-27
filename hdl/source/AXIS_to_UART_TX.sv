@@ -24,7 +24,7 @@ module AXIS_to_UART_TX
 // -----------------------------------------------------------------------------    
 enum logic[2:0] {IDLE, START, DATA, PARITY, STOP1, STOP2} State, Next_State;
 
-localparam int Cycle_per_Period = CLK_FREQ * 10e6 / BIT_RATE;
+localparam int Cycle_per_Period = CLK_FREQ * (10**6) / BIT_RATE;
 
 logic [17:0] Clk_Count;
 logic Clk_Count_En, Clk_Count_Done;

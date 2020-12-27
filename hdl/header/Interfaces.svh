@@ -90,7 +90,7 @@ interface UART_intf
     //-------------------------------------------------------------------------------------
     // постоянно принимать данные их mailbox и отдавать в uart rx
     task automatic get_forever_from_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
-        parameter bit_len_in_ns = 10e9/BIT_RATE;
+        parameter bit_len_in_ns = (10**9)/BIT_RATE;
         logic [BIT_PER_WORD-1:0] data;
         logic parity_err, parity_bit;
         
@@ -130,7 +130,7 @@ interface UART_intf
     //-------------------------------------------------------------------------------------
     // постоянно принимать данные из uart и выдавать их в mailbox
     task automatic put_forever_to_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
-        parameter bit_len_in_ns = 10e9/BIT_RATE;
+        parameter bit_len_in_ns = (10**9)/BIT_RATE;
         logic [BIT_PER_WORD-1:0] data;
         logic parity_err;
         

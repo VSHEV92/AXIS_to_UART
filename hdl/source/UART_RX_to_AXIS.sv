@@ -22,7 +22,7 @@ module UART_RX_to_AXIS
 // -----------------------------------------------------------------------------    
 enum logic[2:0] {IDLE, START, DATA, PARITY, STOP1, STOP2, OUT_RDY} State, Next_State;
 
-localparam int Cycle_per_Period = CLK_FREQ * 10e6 / BIT_RATE;
+localparam int Cycle_per_Period = CLK_FREQ * (10**6) / BIT_RATE;
 localparam int Cycle_per_Period_Half = Cycle_per_Period/2;
 
 logic RX_Falling;
