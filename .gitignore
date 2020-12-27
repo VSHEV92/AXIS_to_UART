@@ -27,6 +27,11 @@
 !hdl/source/*.v
 !hdl/testbench
 !hdl/testbench/*
+!hdl/project_top
+!hdl/project_top/*
 
 !tcl
 !tcl/*
+
+!constraints
+!constraints/*

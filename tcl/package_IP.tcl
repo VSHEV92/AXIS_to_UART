@@ -126,9 +126,8 @@ close_project
 file delete -force $Project_Name
 
 # копируем IP в отдельную папку
-#if { [file exists IP] != 0 } { 
-#	file delete -force IP
-#	puts "Delete old Project"
-#}
-#file mkdir IP
-#file copy IP hdl/source
+if { [file exists IP] != 0 } { 
+	file delete -force IP
+}
+file mkdir IP
+file copy hdl/source/ IP/
