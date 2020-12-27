@@ -48,8 +48,8 @@ IP-ядро, преобразующее AXI-Stream в UART и обратно
 - Запуск всех тестов: 
 
 
-```
-vivado -mode batch –source tcl/run_all_tests.tcl -notrace
-```
+  ```
+  vivado -mode batch –source tcl/run_all_tests.tcl -notrace
+  ```
 
 Результаты тестов, появятся в папках log_uart_*_.  Test_Results - краткий отчет. Test_Logs - подробный список ошибок.

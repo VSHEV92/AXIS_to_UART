@@ -23,7 +23,8 @@
 !hdl/header/test_sets
 !hdl/header/test_sets/*
 !hdl/source
-!hdl/source/*
+!hdl/source/*.sv
+!hdl/source/*.v
 !hdl/testbench
 !hdl/testbench/*
 
