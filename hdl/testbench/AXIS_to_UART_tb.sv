@@ -1,4 +1,4 @@
-﻿`timescale 1ns / 1ps
+`timescale 1ns / 1ps
 `include "../header/Interfaces.svh"
 `include "../header/testbench_settings.svh"
 `include "../header/test_set.svh"

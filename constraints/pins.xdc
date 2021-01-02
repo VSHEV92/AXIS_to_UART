@@ -20,3 +20,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports reset]
 # uart rx
 set_property PACKAGE_PIN M12 [get_ports rx]
 set_property IOSTANDARD LVCMOS33 [get_ports rx]
+
+set_property PACKAGE_PIN N6 [get_ports tx]
+set_property IOSTANDARD LVCMOS33 [get_ports tx]

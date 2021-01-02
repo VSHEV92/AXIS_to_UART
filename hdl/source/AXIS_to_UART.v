@@ -1,4 +1,4 @@
-﻿`timescale 1ns / 1ps
+`timescale 1ns / 1ps
 
 // топ уровень модуля, реализующего преобразование axi-stream в uart и обратно 
 
