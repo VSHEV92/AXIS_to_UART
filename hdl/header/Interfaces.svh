@@ -1,5 +1,5 @@
-// ---------------------------------------------------
-// --------------  AXIS интерфейс  -------------------
+п»ї// ---------------------------------------------------
+// --------------  AXIS РёРЅС‚РµСЂС„РµР№СЃ  -------------------
 // ---------------------------------------------------
 interface AXIS_intf (
     input logic aclk,
@@ -23,12 +23,12 @@ interface AXIS_intf (
     );
 
     //-------------------------------------------------------------------------------------
-    // постоянно принимает данные по axis и передает их mailbox
+    // РїРѕСЃС‚РѕСЏРЅРЅРѕ РїСЂРёРЅРёРјР°РµС‚ РґР°РЅРЅС‹Рµ РїРѕ axis Рё РїРµСЂРµРґР°РµС‚ РёС… mailbox
     task automatic put_forever_to_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
         forever begin
             wait (aresetn);
             @(posedge aclk)
-            // если данные валидны, скадем их в mailbox
+            // РµСЃР»Рё РґР°РЅРЅС‹Рµ РІР°Р»РёРґРЅС‹, СЃРєР°РґРµРј РёС… РІ mailbox
             if(tvalid) begin
                 data_mb.put(tdata);
                 parity_err_mb.put(tuser);
@@ -37,22 +37,22 @@ interface AXIS_intf (
     endtask
     
     //-------------------------------------------------------------------------------------
-    // постоянно принимает данные из mailbox и передает их по axis  
+    // РїРѕСЃС‚РѕСЏРЅРЅРѕ РїСЂРёРЅРёРјР°РµС‚ РґР°РЅРЅС‹Рµ РёР· mailbox Рё РїРµСЂРµРґР°РµС‚ РёС… РїРѕ axis  
     task automatic get_forever_from_mailbox(ref mailbox data_mb);
         logic [7:0] data = 'b0;
-        bit new_data = 1'b0; // флаг новых данных на линии
+        bit new_data = 1'b0; // С„Р»Р°Рі РЅРѕРІС‹С… РґР°РЅРЅС‹С… РЅР° Р»РёРЅРёРё
         tvalid = 1'b0;
         forever begin
             wait (aresetn);
             @(posedge aclk)        
-            if (!new_data) // получаем новые данные и выставляем из на линию
+            if (!new_data) // РїРѕР»СѓС‡Р°РµРј РЅРѕРІС‹Рµ РґР°РЅРЅС‹Рµ Рё РІС‹СЃС‚Р°РІР»СЏРµРј РёР· РЅР° Р»РёРЅРёСЋ
                 if(data_mb.try_get(data)) begin
                     new_data = 1'b1;
                     tvalid <= 1'b1;
                     tdata <= data;
                 end else
                     tvalid <= 1'b0;
-            else // иначе, если tready равен единице, говорим, что данные получены
+            else // РёРЅР°С‡Рµ, РµСЃР»Рё tready СЂР°РІРµРЅ РµРґРёРЅРёС†Рµ, РіРѕРІРѕСЂРёРј, С‡С‚Рѕ РґР°РЅРЅС‹Рµ РїРѕР»СѓС‡РµРЅС‹
                 if(tready) begin 
                     new_data = 1'b0;     
                 end               
@@ -63,14 +63,14 @@ endinterface
 
 
 // ---------------------------------------------------
-// --------------  UART интерфейс  -------------------
+// --------------  UART РёРЅС‚РµСЂС„РµР№СЃ  -------------------
 // ---------------------------------------------------
 interface UART_intf
     #(
-        parameter int BIT_RATE = 115200,    // скорость данных в бит/с
-        parameter int BIT_PER_WORD = 8,     // число бит в одном слове данных
-        parameter int PARITY_BIT = 0,       // бит четсности: 0 - none, 1 - odd, 2 - even
-        parameter int STOP_BITS_NUM = 1     // число стоп-бит: 1 или 2
+        parameter int BIT_RATE = 115200,    // СЃРєРѕСЂРѕСЃС‚СЊ РґР°РЅРЅС‹С… РІ Р±РёС‚/СЃ
+        parameter int BIT_PER_WORD = 8,     // С‡РёСЃР»Рѕ Р±РёС‚ РІ РѕРґРЅРѕРј СЃР»РѕРІРµ РґР°РЅРЅС‹С…
+        parameter int PARITY_BIT = 0,       // Р±РёС‚ С‡РµС‚СЃРЅРѕСЃС‚Рё: 0 - none, 1 - odd, 2 - even
+        parameter int STOP_BITS_NUM = 1     // С‡РёСЃР»Рѕ СЃС‚РѕРї-Р±РёС‚: 1 РёР»Рё 2
     )
     (
         input logic aresetn 
@@ -88,7 +88,7 @@ interface UART_intf
     );
     
     //-------------------------------------------------------------------------------------
-    // постоянно принимать данные их mailbox и отдавать в uart rx
+    // РїРѕСЃС‚РѕСЏРЅРЅРѕ РїСЂРёРЅРёРјР°С‚СЊ РґР°РЅРЅС‹Рµ РёС… mailbox Рё РѕС‚РґР°РІР°С‚СЊ РІ uart rx
     task automatic get_forever_from_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
         parameter bit_len_in_ns = (10**9)/BIT_RATE;
         logic [BIT_PER_WORD-1:0] data;
@@ -97,7 +97,7 @@ interface UART_intf
         RX = 1; 
         forever begin
             wait (aresetn);     
-            // получение данных и формирование бита четности
+            // РїРѕР»СѓС‡РµРЅРёРµ РґР°РЅРЅС‹С… Рё С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ Р±РёС‚Р° С‡РµС‚РЅРѕСЃС‚Рё
             data_mb.get(data);
             parity_err_mb.get(parity_err);
             
@@ -109,18 +109,18 @@ interface UART_intf
             if (parity_err)
                 parity_bit = ~parity_bit;
                 
-            // выдача данных в линию RX    
-            #bit_len_in_ns RX = 1'b0; // старт-бит
+            // РІС‹РґР°С‡Р° РґР°РЅРЅС‹С… РІ Р»РёРЅРёСЋ RX    
+            #bit_len_in_ns RX = 1'b0; // СЃС‚Р°СЂС‚-Р±РёС‚
             
-            for (int i = 0; i<BIT_PER_WORD; i++) // данные
+            for (int i = 0; i<BIT_PER_WORD; i++) // РґР°РЅРЅС‹Рµ
                 #bit_len_in_ns RX = data[i];
             
-            if (PARITY_BIT) // бит четности
+            if (PARITY_BIT) // Р±РёС‚ С‡РµС‚РЅРѕСЃС‚Рё
                 #bit_len_in_ns RX = parity_bit;
                 
-            #bit_len_in_ns RX = 1'b1; // стоп-бит;
+            #bit_len_in_ns RX = 1'b1; // СЃС‚РѕРї-Р±РёС‚;
             
-            if (STOP_BITS_NUM == 2 ) // второй стоп-бит
+            if (STOP_BITS_NUM == 2 ) // РІС‚РѕСЂРѕР№ СЃС‚РѕРї-Р±РёС‚
                 #bit_len_in_ns RX = 1'b1;
                 
             #bit_len_in_ns;                
@@ -128,7 +128,7 @@ interface UART_intf
     endtask
     
     //-------------------------------------------------------------------------------------
-    // постоянно принимать данные из uart и выдавать их в mailbox
+    // РїРѕСЃС‚РѕСЏРЅРЅРѕ РїСЂРёРЅРёРјР°С‚СЊ РґР°РЅРЅС‹Рµ РёР· uart Рё РІС‹РґР°РІР°С‚СЊ РёС… РІ mailbox
     task automatic put_forever_to_mailbox(ref mailbox data_mb, ref mailbox parity_err_mb);
         parameter bit_len_in_ns = (10**9)/BIT_RATE;
         logic [BIT_PER_WORD-1:0] data;
@@ -136,16 +136,16 @@ interface UART_intf
         
         forever begin
             wait (aresetn);
-            @(negedge TX); // ожидаем спада TX
+            @(negedge TX); // РѕР¶РёРґР°РµРј СЃРїР°РґР° TX
             
-            // ждем пол периода, чтобы попасть на середину старт-бита 
+            // Р¶РґРµРј РїРѕР» РїРµСЂРёРѕРґР°, С‡С‚РѕР±С‹ РїРѕРїР°СЃС‚СЊ РЅР° СЃРµСЂРµРґРёРЅСѓ СЃС‚Р°СЂС‚-Р±РёС‚Р° 
             #(bit_len_in_ns/2);
             
-            // принимаем биты данных
-            for (int i = 0; i<BIT_PER_WORD; i++) // данные
+            // РїСЂРёРЅРёРјР°РµРј Р±РёС‚С‹ РґР°РЅРЅС‹С…
+            for (int i = 0; i<BIT_PER_WORD; i++) // РґР°РЅРЅС‹Рµ
                 #bit_len_in_ns data[i] = TX;
             
-            // если есть бит четности принимаем его
+            // РµСЃР»Рё РµСЃС‚СЊ Р±РёС‚ С‡РµС‚РЅРѕСЃС‚Рё РїСЂРёРЅРёРјР°РµРј РµРіРѕ
             if (PARITY_BIT != 0) begin
                 #bit_len_in_ns;
                 if (PARITY_BIT == 1)
@@ -155,10 +155,10 @@ interface UART_intf
             end else
                 parity_err = 1'b0;
             
-            // дожидаемся середины стоп-бита
+            // РґРѕР¶РёРґР°РµРјСЃСЏ СЃРµСЂРµРґРёРЅС‹ СЃС‚РѕРї-Р±РёС‚Р°
             #bit_len_in_ns; 
                 
-            // запись данных и ошибки четности
+            // Р·Р°РїРёСЃСЊ РґР°РЅРЅС‹С… Рё РѕС€РёР±РєРё С‡РµС‚РЅРѕСЃС‚Рё
             data_mb.put(data);
             parity_err_mb.put(parity_err);
                        
