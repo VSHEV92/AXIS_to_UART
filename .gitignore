@@ -20,6 +20,7 @@
 !hdl
 !hdl/header
 !hdl/header/*
+hdl/header/test_set.svh
 !hdl/header/test_sets
 !hdl/header/test_sets/*
 !hdl/source
