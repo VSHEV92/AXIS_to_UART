@@ -1,26 +1,26 @@
-`timescale 1ns / 1ps
+п»ї`timescale 1ns / 1ps
 
-// топ уровень модуля, реализующего преобразование axi-stream в uart и обратно 
+// С‚РѕРї СѓСЂРѕРІРµРЅСЊ РјРѕРґСѓР»СЏ, СЂРµР°Р»РёР·СѓСЋС‰РµРіРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ axi-stream РІ uart Рё РѕР±СЂР°С‚РЅРѕ 
 
 module AXIS_to_UART
 #(
-    parameter CLK_FREQ = 100,       // тактовая частота в MHz
-    parameter BIT_RATE = 115200,    // скорость данных в бит/с
-    parameter BIT_PER_WORD = 8,     // число бит в одном слове данных
-    parameter PARITY_BIT = 0,       // бит четсности: 0 - none, 1 - odd, 2 - even
-    parameter STOP_BITS_NUM = 1     // число стоп-бит: 1 или 2
+    parameter CLK_FREQ = 100,       // С‚Р°РєС‚РѕРІР°СЏ С‡Р°СЃС‚РѕС‚Р° РІ MHz
+    parameter BIT_RATE = 115200,    // СЃРєРѕСЂРѕСЃС‚СЊ РґР°РЅРЅС‹С… РІ Р±РёС‚/СЃ
+    parameter BIT_PER_WORD = 8,     // С‡РёСЃР»Рѕ Р±РёС‚ РІ РѕРґРЅРѕРј СЃР»РѕРІРµ РґР°РЅРЅС‹С…
+    parameter PARITY_BIT = 0,       // Р±РёС‚ С‡РµС‚СЃРЅРѕСЃС‚Рё: 0 - none, 1 - odd, 2 - even
+    parameter STOP_BITS_NUM = 1     // С‡РёСЃР»Рѕ СЃС‚РѕРї-Р±РёС‚: 1 РёР»Рё 2
 )
 (
     input  aclk, aresetn,
-    // input axi-stream интерфейс
+    // input axi-stream РёРЅС‚РµСЂС„РµР№СЃ
     input  [7:0] in_tdata,
     input  in_tvalid,
     output in_tready,
-    // output axi-stream интерфейс
+    // output axi-stream РёРЅС‚РµСЂС„РµР№СЃ
     output  [7:0] out_tdata,
     output  out_tuser,
     output  out_tvalid,
-    //  uart интерфейс     
+    //  uart РёРЅС‚РµСЂС„РµР№СЃ     
     input RX,
     output TX   
     );
@@ -35,13 +35,13 @@ module AXIS_to_UART
     )
     TX_Block
     (
-        //  axi-stream интерфейс
+        //  axi-stream РёРЅС‚РµСЂС„РµР№СЃ
         .aclk(aclk), 
         .aresetn(aresetn),
         .tdata(in_tdata), 
         .tvalid(in_tvalid),
         .tready(in_tready),
-        //  uart интерфейс    
+        //  uart РёРЅС‚РµСЂС„РµР№СЃ    
         .TX(TX)  
     );
      
@@ -55,13 +55,13 @@ module AXIS_to_UART
     )
     RX_Block
     (
-        //  axi-stream интерфейс
+        //  axi-stream РёРЅС‚РµСЂС„РµР№СЃ
         .aclk(aclk), 
         .aresetn(aresetn),
         .tdata(out_tdata), 
         .tuser(out_tuser),
         .tvalid(out_tvalid),
-        //  uart интерфейс    
+        //  uart РёРЅС‚РµСЂС„РµР№СЃ    
         .RX(RX)    
     );    
 endmodule

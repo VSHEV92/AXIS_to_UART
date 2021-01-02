@@ -1,5 +1,5 @@
-# ---------------------------------------------------------------------
-# ----- Cкрипт для автоматической упаковки ядра из исходников ---------
+п»ї# ---------------------------------------------------------------------
+# ----- CРєСЂРёРїС‚ РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕР№ СѓРїР°РєРѕРІРєРё СЏРґСЂР° РёР· РёСЃС…РѕРґРЅРёРєРѕРІ ---------
 # ---------------------------------------------------------------------
 set Project_Name edit_ip_project
 
@@ -16,13 +16,13 @@ ipx::current_core hdl/source/component.xml
 set_property top AXIS_to_UART [current_fileset]
 update_compile_order -fileset sources_1
 
-# настройка главной страницы
+# РЅР°СЃС‚СЂРѕР№РєР° РіР»Р°РІРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹
 set_property vendor VSHEV92 [ipx::current_core]
 set_property name UART_to_AXIS [ipx::current_core]
 set_property display_name UART_to_AXIS [ipx::current_core]
 set_property description UART_to_AXIS [ipx::current_core]
 
-# параметр выбора режима работы блока
+# РїР°СЂР°РјРµС‚СЂ РІС‹Р±РѕСЂР° СЂРµР¶РёРјР° СЂР°Р±РѕС‚С‹ Р±Р»РѕРєР°
 ipx::add_user_parameter RX_TX [ipx::current_core]
 set_property value_resolve_type user [ipx::get_user_parameters RX_TX -of_objects [ipx::current_core]]
 ipgui::add_param -name {RX_TX} -component [ipx::current_core]
@@ -33,32 +33,32 @@ set_property value RX/TX [ipx::get_user_parameters RX_TX -of_objects [ipx::curre
 set_property value_validation_type list [ipx::get_user_parameters RX_TX -of_objects [ipx::current_core]]
 set_property value_validation_list {RX TX RX/TX} [ipx::get_user_parameters RX_TX -of_objects [ipx::current_core]]
 
-# число бит в слове данных
+# С‡РёСЃР»Рѕ Р±РёС‚ РІ СЃР»РѕРІРµ РґР°РЅРЅС‹С…
 set_property display_name {Bits per Word} [ipgui::get_guiparamspec -name "BIT_PER_WORD" -component [ipx::current_core] ]
 set_property tooltip {Number of bits per  data word} [ipgui::get_guiparamspec -name "BIT_PER_WORD" -component [ipx::current_core] ]
 set_property widget {comboBox} [ipgui::get_guiparamspec -name "BIT_PER_WORD" -component [ipx::current_core] ]
 set_property value_validation_type list [ipx::get_user_parameters BIT_PER_WORD -of_objects [ipx::current_core]]
 set_property value_validation_list {5 6 7 8} [ipx::get_user_parameters BIT_PER_WORD -of_objects [ipx::current_core]]
 
-# битовая скорость
+# Р±РёС‚РѕРІР°СЏ СЃРєРѕСЂРѕСЃС‚СЊ
 set_property widget {comboBox} [ipgui::get_guiparamspec -name "BIT_RATE" -component [ipx::current_core] ]
 set_property value_validation_type list [ipx::get_user_parameters BIT_RATE -of_objects [ipx::current_core]]
 set_property value_validation_list {1200 2400 4800 9600 14400 19200 38400 57600 115200 230400 460800 921600} [ipx::get_user_parameters BIT_RATE -of_objects [ipx::current_core]]
 set_property tooltip {Bit rate in bits per second} [ipgui::get_guiparamspec -name "BIT_RATE" -component [ipx::current_core] ]
 set_property widget {comboBox} [ipgui::get_guiparamspec -name "BIT_RATE" -component [ipx::current_core] ]
 
-# тактовая частота
+# С‚Р°РєС‚РѕРІР°СЏ С‡Р°СЃС‚РѕС‚Р°
 set_property display_name {Clock Frequence (MHz)} [ipgui::get_guiparamspec -name "CLK_FREQ" -component [ipx::current_core] ]
 set_property tooltip {Clock Frequence (MHz)} [ipgui::get_guiparamspec -name "CLK_FREQ" -component [ipx::current_core] ]
 set_property widget {textEdit} [ipgui::get_guiparamspec -name "CLK_FREQ" -component [ipx::current_core] ]
 
-# бит четности
+# Р±РёС‚ С‡РµС‚РЅРѕСЃС‚Рё
 set_property tooltip {Value of parity bit} [ipgui::get_guiparamspec -name "PARITY_BIT" -component [ipx::current_core] ]
 set_property widget {comboBox} [ipgui::get_guiparamspec -name "PARITY_BIT" -component [ipx::current_core] ]
 set_property value_validation_type pairs [ipx::get_user_parameters PARITY_BIT -of_objects [ipx::current_core]]
 set_property value_validation_pairs {None 0 Odd 1 Even 2} [ipx::get_user_parameters PARITY_BIT -of_objects [ipx::current_core]]
 
-# число стоп-бит
+# С‡РёСЃР»Рѕ СЃС‚РѕРї-Р±РёС‚
 set_property display_name {Number of stop bits} [ipgui::get_guiparamspec -name "STOP_BITS_NUM" -component [ipx::current_core] ]
 set_property tooltip {Number of stop bits} [ipgui::get_guiparamspec -name "STOP_BITS_NUM" -component [ipx::current_core] ]
 set_property widget {comboBox} [ipgui::get_guiparamspec -name "STOP_BITS_NUM" -component [ipx::current_core] ]
@@ -73,7 +73,7 @@ set_property tooltip {Parameters} [ipgui::get_pagespec -name "Page 0" -component
 
 ipx::remove_bus_interface interface_axis [ipx::current_core]
 
-# выходной axis
+# РІС‹С…РѕРґРЅРѕР№ axis
 ipx::add_bus_interface axis_out [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:interface:axis_rtl:1.0 [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]
 set_property bus_type_vlnv xilinx.com:interface:axis:1.0 [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]
@@ -88,7 +88,7 @@ set_property physical_name out_tdata [ipx::get_port_maps TDATA -of_objects [ipx:
 set_property enablement_dependency {$RX_TX != "TX"} [ipx::get_bus_interfaces axis_out -of_objects [ipx::current_core]]
 ipx::associate_bus_interfaces -busif axis_out -clock aclk [ipx::current_core]
 
-# входной axis
+# РІС…РѕРґРЅРѕР№ axis
 ipx::add_bus_interface axis_in [ipx::current_core]
 set_property abstraction_type_vlnv xilinx.com:interface:axis_rtl:1.0 [ipx::get_bus_interfaces axis_in -of_objects [ipx::current_core]]
 set_property bus_type_vlnv xilinx.com:interface:axis:1.0 [ipx::get_bus_interfaces axis_in -of_objects [ipx::current_core]]
@@ -113,7 +113,7 @@ set_property physical_name TX [ipx::get_port_maps TxD -of_objects [ipx::get_bus_
 ipx::add_port_map RxD [ipx::get_bus_interfaces uart -of_objects [ipx::current_core]]
 set_property physical_name RX [ipx::get_port_maps RxD -of_objects [ipx::get_bus_interfaces uart -of_objects [ipx::current_core]]]
 
-# пакуем IP
+# РїР°РєСѓРµРј IP
 ipx::merge_project_changes ports [ipx::current_core]
 set_property previous_version_for_upgrade xilinx.com:user:UART_RX_to_AXIS:1.0 [ipx::current_core]
 set_property core_revision 1 [ipx::current_core]
@@ -125,7 +125,7 @@ close_project -delete
 close_project
 file delete -force $Project_Name
 
-# копируем IP в отдельную папку
+# РєРѕРїРёСЂСѓРµРј IP РІ РѕС‚РґРµР»СЊРЅСѓСЋ РїР°РїРєСѓ
 if { [file exists IP] != 0 } { 
 	file delete -force IP
 }

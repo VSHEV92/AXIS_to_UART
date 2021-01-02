@@ -1,23 +1,23 @@
-`timescale 1ns / 1ps
+п»ї`timescale 1ns / 1ps
 
-// модуль реализует прием axi-stream сигнала и выдачу полученных данных по
-// uart интерфейсу 
+// РјРѕРґСѓР»СЊ СЂРµР°Р»РёР·СѓРµС‚ РїСЂРёРµРј axi-stream СЃРёРіРЅР°Р»Р° Рё РІС‹РґР°С‡Сѓ РїРѕР»СѓС‡РµРЅРЅС‹С… РґР°РЅРЅС‹С… РїРѕ
+// uart РёРЅС‚РµСЂС„РµР№СЃСѓ 
 
 module AXIS_to_UART_TX
 #(
-    parameter int CLK_FREQ = 100,       // тактовая частота в MHz
-    parameter int BIT_RATE = 115200,    // скорость данных в бит/с
-    parameter int BIT_PER_WORD = 8,     // число бит в одном слове данных
-    parameter int PARITY_BIT = 0,       // бит четсности: 0 - none, 1 - odd, 2 - even
-    parameter int STOP_BITS_NUM = 1     // число стоп-бит: 1 или 2
+    parameter int CLK_FREQ = 100,       // С‚Р°РєС‚РѕРІР°СЏ С‡Р°СЃС‚РѕС‚Р° РІ MHz
+    parameter int BIT_RATE = 115200,    // СЃРєРѕСЂРѕСЃС‚СЊ РґР°РЅРЅС‹С… РІ Р±РёС‚/СЃ
+    parameter int BIT_PER_WORD = 8,     // С‡РёСЃР»Рѕ Р±РёС‚ РІ РѕРґРЅРѕРј СЃР»РѕРІРµ РґР°РЅРЅС‹С…
+    parameter int PARITY_BIT = 0,       // Р±РёС‚ С‡РµС‚СЃРЅРѕСЃС‚Рё: 0 - none, 1 - odd, 2 - even
+    parameter int STOP_BITS_NUM = 1     // С‡РёСЃР»Рѕ СЃС‚РѕРї-Р±РёС‚: 1 РёР»Рё 2
 )
 (
-    //  axi-stream интерфейс
+    //  axi-stream РёРЅС‚РµСЂС„РµР№СЃ
     input  logic aclk, aresetn,
     input  logic [7:0] tdata,
     input  logic tvalid,
     output logic tready,
-    //  uart интерфейс     
+    //  uart РёРЅС‚РµСЂС„РµР№СЃ     
     output logic TX     
 );
 
@@ -37,7 +37,7 @@ logic [BIT_PER_WORD-1:0] Data;
 logic Parity_Value, Uart_Out;
 
 // -----------------------------------------------------------------------------    
-// входной регистр
+// РІС…РѕРґРЅРѕР№ СЂРµРіРёСЃС‚СЂ
 always_ff @(posedge aclk)
     if(!aresetn)
         Data <= 'b0;
@@ -45,16 +45,16 @@ always_ff @(posedge aclk)
         Data <= tdata;
 
 // -----------------------------------------------------------------------------    
-// вычисление бита четности
+// РІС‹С‡РёСЃР»РµРЅРёРµ Р±РёС‚Р° С‡РµС‚РЅРѕСЃС‚Рё
 always_comb 
     unique case(PARITY_BIT) 
         0: Parity_Value = 'b0;
-        1: Parity_Value = ~(^Data[BIT_PER_WORD-1:0]);  // xor бит данных 
+        1: Parity_Value = ~(^Data[BIT_PER_WORD-1:0]);  // xor Р±РёС‚ РґР°РЅРЅС‹С… 
         2: Parity_Value = ^Data[BIT_PER_WORD-1:0]; 
     endcase       
        
 // -----------------------------------------------------------------------------    
-// счетчик числа циклов
+// СЃС‡РµС‚С‡РёРє С‡РёСЃР»Р° С†РёРєР»РѕРІ
 always_ff @(posedge aclk) begin
     if(!aresetn)
         Clk_Count <= 'b0;
@@ -67,7 +67,7 @@ end
 assign Clk_Count_Done = (Clk_Count == Cycle_per_Period) ? 1'b1 : 1'b0; 
 
 // -----------------------------------------------------------------------------    
-// счетчик числа принятых бит
+// СЃС‡РµС‚С‡РёРє С‡РёСЃР»Р° РїСЂРёРЅСЏС‚С‹С… Р±РёС‚
 always_ff @(posedge aclk) begin
     if(!aresetn)
         Bit_Count <= 'b0;
@@ -80,7 +80,7 @@ end
 assign Bit_Count_Done = (Bit_Count == BIT_PER_WORD-1 && Clk_Count_Done) ? 1'b1 : 1'b0; 
 
 // -----------------------------------------------------------------------------    
-// блок выдачи данных
+// Р±Р»РѕРє РІС‹РґР°С‡Рё РґР°РЅРЅС‹С…
 always_ff @(posedge aclk) begin
     if(!aresetn)
         TX <= 'b1;
@@ -90,16 +90,16 @@ end
 assign tready = (State == IDLE) ? 1'b1 : 1'b0;
 
 // -----------------------------------------------------------------------------    
-// автомат уравления
+// Р°РІС‚РѕРјР°С‚ СѓСЂР°РІР»РµРЅРёСЏ
 
-// смена состояния
+// СЃРјРµРЅР° СЃРѕСЃС‚РѕСЏРЅРёСЏ
 always_ff @(posedge aclk) 
     if(!aresetn)
         State <= IDLE;
     else
         State <= Next_State;
 
-// вычисление выходных сигналов
+// РІС‹С‡РёСЃР»РµРЅРёРµ РІС‹С…РѕРґРЅС‹С… СЃРёРіРЅР°Р»РѕРІ
 always_comb
     unique case(State)
         IDLE: begin
@@ -128,16 +128,16 @@ always_comb
         end
     endcase
 
-// вычисление следующего состояния
+// РІС‹С‡РёСЃР»РµРЅРёРµ СЃР»РµРґСѓСЋС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ
 always_comb
     unique case(State)
-        IDLE: // ожидание начала передачи
+        IDLE: // РѕР¶РёРґР°РЅРёРµ РЅР°С‡Р°Р»Р° РїРµСЂРµРґР°С‡Рё
             Next_State = (tvalid) ? START : IDLE;
             
-        START: // выдача старт-бита
+        START: // РІС‹РґР°С‡Р° СЃС‚Р°СЂС‚-Р±РёС‚Р°
             Next_State = (Clk_Count_Done) ? DATA : START; 
              
-        DATA: // выдача бит данных 
+        DATA: // РІС‹РґР°С‡Р° Р±РёС‚ РґР°РЅРЅС‹С… 
             if (Bit_Count_Done)
                 if (PARITY_BIT)
                     Next_State = PARITY;
@@ -146,10 +146,10 @@ always_comb
             else
                 Next_State = DATA; 
                              
-        PARITY: // выдача бита четности
+        PARITY: // РІС‹РґР°С‡Р° Р±РёС‚Р° С‡РµС‚РЅРѕСЃС‚Рё
             Next_State = (Clk_Count_Done) ? STOP1 : PARITY; 
             
-        STOP1: // выдача первого стоп-бита
+        STOP1: // РІС‹РґР°С‡Р° РїРµСЂРІРѕРіРѕ СЃС‚РѕРї-Р±РёС‚Р°
             if (Clk_Count_Done)
                 if (PARITY_BIT == 1)
                     Next_State = IDLE;
@@ -158,7 +158,7 @@ always_comb
             else
                 Next_State = STOP1; 
             
-        STOP2: // выдача второго стоп-бита
+        STOP2: // РІС‹РґР°С‡Р° РІС‚РѕСЂРѕРіРѕ СЃС‚РѕРї-Р±РёС‚Р°
             Next_State = (Clk_Count_Done) ? IDLE : STOP2;        
     endcase
     

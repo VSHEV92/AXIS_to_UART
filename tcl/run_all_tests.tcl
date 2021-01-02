@@ -1,16 +1,16 @@
-# --------------------------------------------------------------
-# ----- Cкрипт для автоматического запуска всех тестов ---------
+п»ї# --------------------------------------------------------------
+# ----- CРєСЂРёРїС‚ РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ Р·Р°РїСѓСЃРєР° РІСЃРµС… С‚РµСЃС‚РѕРІ ---------
 # --------------------------------------------------------------
 
 # -----------------------------------------------------------
-# процедура для проверки результатов
+# РїСЂРѕС†РµРґСѓСЂР° РґР»СЏ РїСЂРѕРІРµСЂРєРё СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
 proc check_test_results {Log_Dir_Name} {
 	set Verification_Result 1
-	# считываем весь файл
+	# СЃС‡РёС‚С‹РІР°РµРј РІРµСЃСЊ С„Р°Р№Р»
 	set fileID [open $Log_Dir_Name/Test_Results.txt r]
 	set file_data [read $fileID]
 	close $fileID
-	# разделяем файл на строки
+	# СЂР°Р·РґРµР»СЏРµРј С„Р°Р№Р» РЅР° СЃС‚СЂРѕРєРё
 	set data [split $file_data "\n"]
 	foreach line $data {
 		if {[string length $line] && [string first "FAIL" $line] != -1} {
@@ -24,15 +24,15 @@ proc check_test_results {Log_Dir_Name} {
 }
 
 # -----------------------------------------------------------
-# основной скрипт
+# РѕСЃРЅРѕРІРЅРѕР№ СЃРєСЂРёРїС‚
 set Verification_Result 1
 
-# запуск тестов
+# Р·Р°РїСѓСЃРє С‚РµСЃС‚РѕРІ
 source tcl/run_uart_tx_tests.tcl
 source tcl/run_uart_rx_tests.tcl
 source tcl/run_uart_loop_tests.tcl
 
-# проверка результатов
+# РїСЂРѕРІРµСЂРєР° СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
 puts ""
 
 set Log_Dir_Name log_uart_tx_test
@@ -44,7 +44,7 @@ set Verification_Result [check_test_results $Log_Dir_Name]
 set Log_Dir_Name log_uart_loop_test
 set Verification_Result [check_test_results $Log_Dir_Name]
 
-# вывод результатов
+# РІС‹РІРѕРґ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
 puts ""
 if { $Verification_Result } {
 	puts "-------------------------------------------"

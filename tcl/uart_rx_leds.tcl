@@ -1,13 +1,13 @@
+п»ї# --------------------------------------------------------------
+# ------- CРєСЂРёРїС‚ РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ СЃРѕР·РґР°РЅРёСЏ РїСЂРѕРµРєС‚Р° ----------
 # --------------------------------------------------------------
-# ------- Cкрипт для автоматического создания проекта ----------
-# --------------------------------------------------------------
-# Демонстрационный проект для платы Artix 7A50T Board. Используется 
-# только Uart RX. Принятое слово данных выводится на Leds.
+# Р”РµРјРѕРЅСЃС‚СЂР°С†РёРѕРЅРЅС‹Р№ РїСЂРѕРµРєС‚ РґР»СЏ РїР»Р°С‚С‹ Artix 7A50T Board. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ 
+# С‚РѕР»СЊРєРѕ Uart RX. РџСЂРёРЅСЏС‚РѕРµ СЃР»РѕРІРѕ РґР°РЅРЅС‹С… РІС‹РІРѕРґРёС‚СЃСЏ РЅР° Leds.
 # -----------------------------------------------------------
 
 set Project_Name uart_project
 
-# если проект с таким именем существует удаляем его
+# РµСЃР»Рё РїСЂРѕРµРєС‚ СЃ С‚Р°РєРёРј РёРјРµРЅРµРј СЃСѓС‰РµСЃС‚РІСѓРµС‚ СѓРґР°Р»СЏРµРј РµРіРѕ
 close_sim -quiet 
 close_project -quiet
 if { [file exists $Project_Name] != 0 } { 
@@ -15,10 +15,10 @@ if { [file exists $Project_Name] != 0 } {
 	puts "Delete old Project"
 }
 
-# создаем проект
+# СЃРѕР·РґР°РµРј РїСЂРѕРµРєС‚
 create_project $Project_Name ./$Project_Name -part xc7a50tftg256-1
 
-# запускаем скрипт по упаковке ядра и добавляем репозиторий
+# Р·Р°РїСѓСЃРєР°РµРј СЃРєСЂРёРїС‚ РїРѕ СѓРїР°РєРѕРІРєРµ СЏРґСЂР° Рё РґРѕР±Р°РІР»СЏРµРј СЂРµРїРѕР·РёС‚РѕСЂРёР№
 if { [file exists IP] == 0 } { 
 	source tcl/package_IP.tcl
 } else {
@@ -28,15 +28,15 @@ open_project uart_project/uart_project.xpr
 set_property  ip_repo_paths IP [current_project]
 update_ip_catalog
 
-# добавляем топ уровень проекта
+# РґРѕР±Р°РІР»СЏРµРј С‚РѕРї СѓСЂРѕРІРµРЅСЊ РїСЂРѕРµРєС‚Р°
 add_files hdl/project_top/uart_rx_leds.v
 
-# добавляем constraints файлы 
+# РґРѕР±Р°РІР»СЏРµРј constraints С„Р°Р№Р»С‹ 
 add_files -fileset constrs_1 -norecurse constraints/pins.xdc
 add_files -fileset constrs_1 -norecurse constraints/timing.xdc
 set_property target_constrs_file constraints/timing.xdc [current_fileset -constrset]
 
-# создаем IP ядро
+# СЃРѕР·РґР°РµРј IP СЏРґСЂРѕ
 create_ip -name UART_to_AXIS -vendor VSHEV92 -library user -version 1.0 -module_name UART_to_AXIS_0 -dir uart_project
 set_property -dict [list CONFIG.CLK_FREQ {200} CONFIG.RX_TX {RX}] [get_ips UART_to_AXIS_0]
 update_compile_order -fileset sources_1

@@ -1,16 +1,16 @@
-# --------------------------------------------------------------
-# ----- Cкрипт для автоматического запуска тестов Uart Loop ----
+п»ї# --------------------------------------------------------------
+# ----- CРєСЂРёРїС‚ РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ Р·Р°РїСѓСЃРєР° С‚РµСЃС‚РѕРІ Uart Loop ----
 # --------------------------------------------------------------
 
 # -----------------------------------------------------------
 proc launch_test_set {Test_Number Log_Dir_Name} {
-	# выбераем первый тестовый набор в качествре начального   
+	# РІС‹Р±РµСЂР°РµРј РїРµСЂРІС‹Р№ С‚РµСЃС‚РѕРІС‹Р№ РЅР°Р±РѕСЂ РІ РєР°С‡РµСЃС‚РІСЂРµ РЅР°С‡Р°Р»СЊРЅРѕРіРѕ   
 	set Test_Set_Name ./hdl/header/test_sets/test_set
 	append Test_Set_Name _$Test_Number
 	append Test_Set_Name .svh
 	file copy -force $Test_Set_Name ./hdl/header/test_set.svh
 
-	# пишим номер теста в log файлы
+	# РїРёС€РёРј РЅРѕРјРµСЂ С‚РµСЃС‚Р° РІ log С„Р°Р№Р»С‹
 	set fileID [open $Log_Dir_Name/Test_Results.txt a]
 	puts -nonewline $fileID "TEST SET $Test_Number: "
 	close $fileID
@@ -20,7 +20,7 @@ proc launch_test_set {Test_Number Log_Dir_Name} {
 	puts $fileID "TEST SET $Test_Number: "
 	close $fileID
 	
-	# запускаем моделирование
+	# Р·Р°РїСѓСЃРєР°РµРј РјРѕРґРµР»РёСЂРѕРІР°РЅРёРµ
 	launch_simulation
 	close_sim -quiet 
 }
@@ -29,7 +29,7 @@ proc launch_test_set {Test_Number Log_Dir_Name} {
 set Project_Name uart_loop_test
 set Number_of_Test_Sets 6
 
-# если проект с таким именем существует удаляем его
+# РµСЃР»Рё РїСЂРѕРµРєС‚ СЃ С‚Р°РєРёРј РёРјРµРЅРµРј СЃСѓС‰РµСЃС‚РІСѓРµС‚ СѓРґР°Р»СЏРµРј РµРіРѕ
 close_sim -quiet 
 close_project -quiet
 if { [file exists $Project_Name] != 0 } { 
@@ -37,34 +37,34 @@ if { [file exists $Project_Name] != 0 } {
 	puts "Delete old Project"
 }
 
-# создаем проект
+# СЃРѕР·РґР°РµРј РїСЂРѕРµРєС‚
 create_project $Project_Name ./$Project_Name -part xc7vx485tffg1157-1
 
-# выбераем первый тестовый набор в качествре начального   
+# РІС‹Р±РµСЂР°РµРј РїРµСЂРІС‹Р№ С‚РµСЃС‚РѕРІС‹Р№ РЅР°Р±РѕСЂ РІ РєР°С‡РµСЃС‚РІСЂРµ РЅР°С‡Р°Р»СЊРЅРѕРіРѕ   
 set Test_Set_Name ./hdl/header/test_sets/test_set_1.svh
 file copy -force $Test_Set_Name ./hdl/header/test_set.svh
 
-# добавляем заголовочные файлы к проекту
+# РґРѕР±Р°РІР»СЏРµРј Р·Р°РіРѕР»РѕРІРѕС‡РЅС‹Рµ С„Р°Р№Р»С‹ Рє РїСЂРѕРµРєС‚Сѓ
 add_files ./hdl/header/Interfaces.svh
 add_files ./hdl/header/testbench_settings.svh
 add_files ./hdl/header/test_set.svh
 
-# добавляем исходники к проекту
+# РґРѕР±Р°РІР»СЏРµРј РёСЃС…РѕРґРЅРёРєРё Рє РїСЂРѕРµРєС‚Сѓ
 add_files ./hdl/source/AXIS_to_UART_TX.sv
 add_files ./hdl/source/UART_RX_to_AXIS.sv
 
-# добавляем тестбенч к проекту
+# РґРѕР±Р°РІР»СЏРµРј С‚РµСЃС‚Р±РµРЅС‡ Рє РїСЂРѕРµРєС‚Сѓ
 set_property SOURCE_SET sources_1 [get_filesets sim_1]
 add_files -fileset sim_1 ./hdl/testbench/UART_Loop_tb.sv
 
-# обновляем иерархию файлов проекта
+# РѕР±РЅРѕРІР»СЏРµРј РёРµСЂР°СЂС…РёСЋ С„Р°Р№Р»РѕРІ РїСЂРѕРµРєС‚Р°
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
-# устанавливаем максимальное время моделирования 
+# СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ РјРѕРґРµР»РёСЂРѕРІР°РЅРёСЏ 
 set_property -name {xsim.simulate.runtime} -value {100s} -objects [get_filesets sim_1]
 
-# создаем log файл для результатов тестирования
+# СЃРѕР·РґР°РµРј log С„Р°Р№Р» РґР»СЏ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ
 set Log_Dir_Name log_$Project_Name
 file mkdir $Log_Dir_Name
 set fileID [open $Log_Dir_Name/Test_Results.txt w]
@@ -72,11 +72,11 @@ close $fileID
 set fileID [open $Log_Dir_Name/Test_Logs.txt w]
 close $fileID
 
-# запускаем тестовые наборы
+# Р·Р°РїСѓСЃРєР°РµРј С‚РµСЃС‚РѕРІС‹Рµ РЅР°Р±РѕСЂС‹
 for {set i 1} {$i <= $Number_of_Test_Sets} {incr i} {
     launch_test_set $i $Log_Dir_Name
 }
 
-# закрываем проект после завершения
+# Р·Р°РєСЂС‹РІР°РµРј РїСЂРѕРµРєС‚ РїРѕСЃР»Рµ Р·Р°РІРµСЂС€РµРЅРёСЏ
 close_project -quiet
 

@@ -1,10 +1,10 @@
-`timescale 1ns / 1ps
+п»ї`timescale 1ns / 1ps
 `include "../header/Interfaces.svh"
 `include "../header/testbench_settings.svh"
 `include "../header/test_set.svh"
 
 // ---------------------------------------------------------------
-//--------- тестового окружения для передатчика UART -------------
+//--------- С‚РµСЃС‚РѕРІРѕРіРѕ РѕРєСЂСѓР¶РµРЅРёСЏ РґР»СЏ РїРµСЂРµРґР°С‚С‡РёРєР° UART -------------
 // ---------------------------------------------------------------
 
 module AXIS_to_UART_tb();
@@ -14,18 +14,18 @@ module AXIS_to_UART_tb();
     logic clk = 1'b0;
     logic resetn = 1'b0;
     
-    // mailbox для данных
+    // mailbox РґР»СЏ РґР°РЅРЅС‹С…
     mailbox input_data_mb = new();
     mailbox output_data_mb = new();
     
-    // mailbox для ошибок четности
+    // mailbox РґР»СЏ РѕС€РёР±РѕРє С‡РµС‚РЅРѕСЃС‚Рё
     mailbox parity_err_mb = new();    
     
-    logic [BIT_PER_WORD-1:0] data_array[DATA_WORDS_NUMB], result_data_array[DATA_WORDS_NUMB];  // массив данных для передачи
-    logic parity_err_array [DATA_WORDS_NUMB];                                                  // флаги ошибок четности
+    logic [BIT_PER_WORD-1:0] data_array[DATA_WORDS_NUMB], result_data_array[DATA_WORDS_NUMB];  // РјР°СЃСЃРёРІ РґР°РЅРЅС‹С… РґР»СЏ РїРµСЂРµРґР°С‡Рё
+    logic parity_err_array [DATA_WORDS_NUMB];                                                  // С„Р»Р°РіРё РѕС€РёР±РѕРє С‡РµС‚РЅРѕСЃС‚Рё
 
 // ---------------------------------------------------------------------------------     
-    // интерфейсы
+    // РёРЅС‚РµСЂС„РµР№СЃС‹
     AXIS_intf axis(clk, resetn);
     UART_intf
     #(
@@ -36,7 +36,7 @@ module AXIS_to_UART_tb();
      )
      uart(resetn);
 // ---------------------------------------------------------------------------------            
-    // тестируемый модуль 
+    // С‚РµСЃС‚РёСЂСѓРµРјС‹Р№ РјРѕРґСѓР»СЊ 
     AXIS_to_UART_TX
     #(
         .CLK_FREQ(CLK_FREQ),       
@@ -47,46 +47,46 @@ module AXIS_to_UART_tb();
     )
     DUT
     (
-        //  axi-stream интерфейс
+        //  axi-stream РёРЅС‚РµСЂС„РµР№СЃ
         .aclk(axis.Slave.aclk), 
         .aresetn(axis.Slave.aresetn),
         .tdata(axis.Slave.tdata), 
         .tvalid(axis.Slave.tvalid),
         .tready(axis.Slave.tready),
-        //  uart интерфейс    
+        //  uart РёРЅС‚РµСЂС„РµР№СЃ    
         .TX(uart.TX_Mod.TX)  
     );
 
 // ---------------------------------------------------------------------------------            
-// формирование тактового сигнала 
+// С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ С‚Р°РєС‚РѕРІРѕРіРѕ СЃРёРіРЅР°Р»Р° 
     initial forever
         #(1000.0 / 2 / CLK_FREQ) clk = ~clk; 
 
 // ---------------------------------------------------------------------------------                
-// снятие сигнала сброса
+// СЃРЅСЏС‚РёРµ СЃРёРіРЅР°Р»Р° СЃР±СЂРѕСЃР°
     initial 
         #RESET_DEASSERT_DELAY resetn = 1'b1; 
         
 // ---------------------------------------------------------------------------------        
-// созадние тестовых массивов и запуск передачи
+// СЃРѕР·Р°РґРЅРёРµ С‚РµСЃС‚РѕРІС‹С… РјР°СЃСЃРёРІРѕРІ Рё Р·Р°РїСѓСЃРє РїРµСЂРµРґР°С‡Рё
     initial begin
-        // созадние тестовых массивов
+        // СЃРѕР·Р°РґРЅРёРµ С‚РµСЃС‚РѕРІС‹С… РјР°СЃСЃРёРІРѕРІ
         for(int i = 0; i < DATA_WORDS_NUMB; i++) begin
             data_array[i] = $urandom_range(2**BIT_PER_WORD - 1, 0);              
         end
         
-        fork // запуск процессов передачи данных в axis и приема из uart
+        fork // Р·Р°РїСѓСЃРє РїСЂРѕС†РµСЃСЃРѕРІ РїРµСЂРµРґР°С‡Рё РґР°РЅРЅС‹С… РІ axis Рё РїСЂРёРµРјР° РёР· uart
             axis.get_forever_from_mailbox(input_data_mb);
             uart.put_forever_to_mailbox(output_data_mb, parity_err_mb);
         join_none
         
-        // запись в mailbox
+        // Р·Р°РїРёСЃСЊ РІ mailbox
         for(int i = 0; i < DATA_WORDS_NUMB; i++) begin
             #($urandom_range(DATA_MAX_DELAY, DATA_MIN_DELAY));
             input_data_mb.put(data_array[i]); 
         end
         
-        // чтение данных из в mailbox
+        // С‡С‚РµРЅРёРµ РґР°РЅРЅС‹С… РёР· РІ mailbox
         for(int i = 0; i < DATA_WORDS_NUMB; i++) begin
             output_data_mb.get(result_data_array[i]);
             parity_err_mb.get(parity_err_array[i]); 
@@ -96,7 +96,7 @@ module AXIS_to_UART_tb();
     end
 
 // ---------------------------------------------------------------------------------        
-// обработка результатов моделирования
+// РѕР±СЂР°Р±РѕС‚РєР° СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РјРѕРґРµР»РёСЂРѕРІР°РЅРёСЏ
      final begin
         automatic bit test_result = 1;
         automatic string file_path = find_file_path(`__FILE__);
@@ -104,14 +104,14 @@ module AXIS_to_UART_tb();
         f_log = $fopen({file_path, "../../log_uart_tx_test/Test_Logs.txt"}, "a");
         
         for (int i = 0; i < DATA_WORDS_NUMB; i++) begin 
-            // сравнение полученных данных
+            // СЃСЂР°РІРЅРµРЅРёРµ РїРѕР»СѓС‡РµРЅРЅС‹С… РґР°РЅРЅС‹С…
             if (result_data_array[i] != data_array[i]) begin
                 $display("Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
                 $fdisplay(f_log, "Data words number %3d not match! Gold value: %h. Result value: %h.", i, data_array[i], result_data_array[i]);
                 test_result = 0;
             end
             
-            // сравнение бит четности
+            // СЃСЂР°РІРЅРµРЅРёРµ Р±РёС‚ С‡РµС‚РЅРѕСЃС‚Рё
             if (PARITY_BIT != 0)
                 if(parity_err_array[i]) begin
                     $display("Parite error in word number %3d!", i);
@@ -119,7 +119,7 @@ module AXIS_to_UART_tb();
                     test_result = 0;  
                 end
         end
-        // вывод результатов тестирования
+        // РІС‹РІРѕРґ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ
         $display("-------------------------------------");
         if (test_result) begin
             $display("------------- TEST PASS -------------");
