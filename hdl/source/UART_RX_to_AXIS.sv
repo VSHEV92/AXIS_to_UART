@@ -152,7 +152,7 @@ always_comb
             
         STOP1: // прием первого стоп-бита
             if (Clk_Count_Done)
-                if (PARITY_BIT == 1)
+                if (STOP_BITS_NUM == 1)
                     Next_State = OUT_RDY;
                 else
                     Next_State = STOP2;  
